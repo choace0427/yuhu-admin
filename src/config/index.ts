@@ -4,6 +4,7 @@ import {
 	IconLock,
 	IconMessage,
 	IconMoodSmile,
+	IconRepeat,
 	IconUsers,
 } from "@tabler/icons-react";
 import type { NavItem } from "@/types/nav-item";
@@ -24,6 +25,11 @@ export const navLinks: NavItem[] = [
 				link: "/dashboard/users/therapist",
 			},
 		],
+	},
+	{
+		label: "Booking",
+		icon: IconRepeat,
+		link: "/dashboard/booking",
 	},
 	{
 		label: "Chat",
