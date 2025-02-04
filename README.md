@@ -4,12 +4,12 @@
 <!-- markdownlint-disable MD041 -->
 
 <h1 align="center">
-  Mantine Admin
+  Yuhu Admin
 </h1>
 
 <!-- Banner Section -->
 <p align="center">
-  <img src="./public/static/images/og.png" alt="Mantine Admin Banner" width="600px" />
+  <img src="./public/static/images/og.png" alt="Yuhu Admin Banner" width="600px" />
 </p>
 <h3 align="center">
   💻 A Modern Dashboard with Next.js.!

@@ -56,7 +56,7 @@ export const OGImage = () => {
           lineHeight: 1.4,
         }}
       >
-        Mantine Admin
+        Yuhu Admin
       </div>
     </div>
   );
