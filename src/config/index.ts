@@ -6,6 +6,7 @@ import {
 	IconMessage,
 	IconMoodSmile,
 	IconRepeat,
+	IconServicemark,
 	IconUsers,
 } from "@tabler/icons-react";
 import type { NavItem } from "@/types/nav-item";
@@ -36,6 +37,11 @@ export const navLinks: NavItem[] = [
 		label: "Transaction",
 		icon: IconEyeDollar,
 		link: "/dashboard/transaction",
+	},
+	{
+		label: "Services",
+		icon: IconServicemark,
+		link: "/dashboard/services",
 	},
 	{
 		label: "Chat",
