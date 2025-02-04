@@ -17,14 +17,14 @@ import {
 	Paper,
 	Group,
 } from "@mantine/core";
-import { useBooking } from "@/services/booking";
-import { BookingList } from "@/services/booking/types";
 import { PageContainer } from "@/components/PageContainer/PageContainer";
+import { useTransaction } from "@/services/transaction";
+import { TransactionList } from "@/services/transaction/types";
 
 export default function BookingAdminPanel() {
-	const { data, isError, isFetching, isLoading } = useBooking();
+	const { data, isError, isFetching, isLoading } = useTransaction();
 
-	const columns = useMemo<MRT_ColumnDef<BookingList>[]>(
+	const columns = useMemo<MRT_ColumnDef<TransactionList>[]>(
 		() => [
 			{
 				accessorKey: "no",
@@ -55,28 +55,30 @@ export default function BookingAdminPanel() {
 				accessorKey: "service",
 				header: "Service",
 				Cell: ({ row }) => (
-					<Text>{row.original.service || "Not specified"}</Text>
+					<Text>{row.original.therapist_list?.service || "Not specified"}</Text>
 				),
 			},
 			{
 				accessorKey: "date",
 				header: "Date",
-				Cell: ({ row }) => <Text>{row.original.b_date?.date}</Text>,
+				Cell: ({ row }) => (
+					<Text>{row.original.booking_list?.b_date?.date}</Text>
+				),
 			},
 			{
 				accessorKey: "booking_status",
-				header: "Status",
+				header: "Payment Status",
 				Cell: ({ row }) => (
 					<Badge
 						color={
-							row.original.booking_status === "confirmed"
+							row.original.status === "succeeded"
 								? "green"
-								: row.original.booking_status === "cancelled"
+								: row.original.status === "refunded"
 								? "red"
 								: "yellow"
 						}
 					>
-						{row.original.booking_status}
+						{row.original.status}
 					</Badge>
 				),
 			},
@@ -85,7 +87,7 @@ export default function BookingAdminPanel() {
 	);
 
 	return (
-		<PageContainer title="Booking List">
+		<PageContainer title="Transaction List">
 			<MantineReactTable
 				enableFullScreenToggle={false}
 				enableDensityToggle={false}
@@ -121,7 +123,7 @@ export default function BookingAdminPanel() {
 											<Text component="span" fw={500}>
 												Service:
 											</Text>{" "}
-											{row.original.service || "Not specified"}
+											{row.original.therapist_list.service || "Not specified"}
 										</Text>
 									</Stack>
 								</Paper>
@@ -138,7 +140,8 @@ export default function BookingAdminPanel() {
 													Date
 												</Text>
 												<Text>
-													{row.original.b_date?.date || "Not specified"}
+													{row.original.booking_list.b_date?.date ||
+														"Not specified"}
 												</Text>
 											</div>
 											<div>
@@ -146,24 +149,38 @@ export default function BookingAdminPanel() {
 													Duration
 												</Text>
 												<Text>
-													{(row.original.b_date?.range?.length || 0) * 2} hours
+													{(row.original.booking_list.b_date?.range?.length ||
+														0) * 2}{" "}
+													hours
 												</Text>
 											</div>
 											<div>
 												<Text size="sm" color="dimmed">
-													Status
+													Total Amount
+												</Text>
+												<Text>
+													$
+													{(row.original.booking_list.b_date?.range?.length ||
+														0) *
+														row.original.therapist_list.hourly_rate *
+														2}{" "}
+												</Text>
+											</div>
+											<div>
+												<Text size="sm" color="dimmed">
+													Payment Status
 												</Text>
 												<Badge
-													size="lg"
+													size="md"
 													color={
-														row.original.booking_status === "confirmed"
+														row.original.status === "succeeded"
 															? "green"
-															: row.original.booking_status === "cancelled"
+															: row.original.status === "refunded"
 															? "red"
 															: "yellow"
 													}
 												>
-													{row.original.booking_status}
+													{row.original.status}
 												</Badge>
 											</div>
 										</Group>
@@ -171,17 +188,19 @@ export default function BookingAdminPanel() {
 											Time Slots:
 										</Text>
 										<Group gap="xs">
-											{Array.isArray(row.original.b_date?.range) &&
-												row.original.b_date.range.map((timeSlot: number) => {
-													const startHour = timeSlot * 2;
-													const endHour = startHour + 2;
-													return (
-														<Badge key={timeSlot} variant="outline" size="lg">
-															{startHour.toString().padStart(2, "0")}:00 -{" "}
-															{endHour.toString().padStart(2, "0")}:00
-														</Badge>
-													);
-												})}
+											{Array.isArray(row.original.booking_list.b_date?.range) &&
+												row.original.booking_list.b_date.range.map(
+													(timeSlot: number) => {
+														const startHour = timeSlot * 2;
+														const endHour = startHour + 2;
+														return (
+															<Badge key={timeSlot} variant="outline" size="lg">
+																{startHour.toString().padStart(2, "0")}:00 -{" "}
+																{endHour.toString().padStart(2, "0")}:00
+															</Badge>
+														);
+													}
+												)}
 										</Group>
 									</Stack>
 								</Paper>

@@ -1,6 +1,7 @@
 import {
 	IconComponents,
 	IconDashboard,
+	IconEyeDollar,
 	IconLock,
 	IconMessage,
 	IconMoodSmile,
@@ -30,6 +31,11 @@ export const navLinks: NavItem[] = [
 		label: "Booking",
 		icon: IconRepeat,
 		link: "/dashboard/booking",
+	},
+	{
+		label: "Transaction",
+		icon: IconEyeDollar,
+		link: "/dashboard/transaction",
 	},
 	{
 		label: "Chat",

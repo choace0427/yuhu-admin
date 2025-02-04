@@ -12,17 +12,6 @@ export const getBookingList = async () => {
 	return data as BookingList[];
 };
 
-export const updateCustomer = async (status: string, id: string) => {
-	const { data, error } = await supabase
-		.from("customers_list")
-		.update({ status })
-		.eq("id", id);
-	if (error) {
-		console.error(error);
-	}
-	return data;
-};
-
 export const useBooking = () => {
 	return useQuery<BookingList[]>({
 		queryKey: ["booking_list"],

@@ -237,20 +237,6 @@ export default function AdminChatManagement() {
 										</Paper>
 									))}
 								</ScrollArea>
-								{/* <Group align="flex-start">
-									<Textarea
-										placeholder="Type your message here..."
-										value={newMessage}
-										onChange={(event) =>
-											setNewMessage(event.currentTarget.value)
-										}
-										style={{ flex: 1 }}
-										autosize
-										minRows={2}
-										maxRows={4}
-									/>
-									<Button onClick={handleSendMessage}>Send</Button>
-								</Group> */}
 							</>
 						) : (
 							<Text ta="center" color="dimmed">
@@ -260,35 +246,6 @@ export default function AdminChatManagement() {
 					</Paper>
 				</Grid.Col>
 			</Grid>
-
-			{/* <Modal opened={opened} onClose={close} title="Advanced Filters">
-				<Select
-					label="Status"
-					placeholder="Filter by status"
-					value={statusFilter}
-					onChange={setStatusFilter}
-					data={[
-						{ value: "New", label: "New" },
-						{ value: "Active", label: "Active" },
-						{ value: "Completed", label: "Completed" },
-					]}
-					clearable
-				/>
-				<DateRangePicker
-					label="Date Range"
-					placeholder="Filter by date range"
-					value={dateRange}
-					onChange={setDateRange}
-					mt="md"
-				/>
-				<Checkbox label="Show only unread conversations" mt="md" />
-				<Group mt="md">
-					<Button variant="outline" onClick={close}>
-						Cancel
-					</Button>
-					<Button onClick={close}>Apply Filters</Button>
-				</Group>
-			</Modal> */}
 		</PageContainer>
 	);
 }
