@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import type { BookingList } from "./types";
-import { supabase } from "@/supabase";
+import { createClient } from "@/utils/supabase/client";
 
 export const getBookingList = async () => {
+	const supabase = createClient();
 	const { data, error } = await supabase
 		.from("booking_list")
 		.select(`*, customers_list:customer_id(*), therapist_list:therapist_id(*)`);

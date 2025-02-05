@@ -21,7 +21,7 @@ import {
 	IconCheck,
 	IconDotsVertical,
 } from "@tabler/icons-react";
-import { supabase } from "@/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { updateTherapist, useTherapists } from "@/services/therapist";
 import { TherapistList } from "@/services/therapist/types";
@@ -159,6 +159,7 @@ export default function TherapistPage() {
 	});
 
 	useEffect(() => {
+		const supabase = createClient();
 		const therapistListRealtime = supabase
 			.channel("therapist_list-db-changes")
 			.on(

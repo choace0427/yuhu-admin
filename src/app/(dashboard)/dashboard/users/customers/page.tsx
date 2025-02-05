@@ -23,7 +23,7 @@ import {
 	IconCheck,
 	IconDotsVertical,
 } from "@tabler/icons-react";
-import { supabase } from "@/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function CustomersPage() {
@@ -135,6 +135,7 @@ export default function CustomersPage() {
 	});
 
 	useEffect(() => {
+		const supabase = createClient();
 		const customerListRealtime = supabase
 			.channel("customer_list-db-changes")
 			.on(

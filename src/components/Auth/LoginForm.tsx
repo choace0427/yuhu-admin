@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { useAuthStore } from "@/store/authStore";
 import { notifications } from "@mantine/notifications";
+import { createClient } from "@/utils/supabase/client";
 
 interface FormData {
 	email: string;
@@ -70,6 +71,7 @@ export function LoginForm() {
 						position: "top-center",
 						color: "green",
 					});
+					const supabase = createClient();
 					router.push("/dashboard");
 				} else
 					notifications.show({

@@ -28,6 +28,12 @@ export function Navbar({ data }: Props) {
 	const user = useAuthStore((state: any) => state.user);
 
 	const router = useRouter();
+
+	const handleSignout = async () => {
+		await signOut();
+		router.push("/login");
+	};
+
 	return (
 		<>
 			<ScrollArea className={classes.links}>
@@ -75,7 +81,7 @@ export function Navbar({ data }: Props) {
 							<Menu.Item
 								color="red"
 								leftSection={<IconLogout size={14} />}
-								onClick={() => signOut()}
+								onClick={() => handleSignout()}
 							>
 								Sign Out
 							</Menu.Item>

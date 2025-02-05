@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import type { TherapistList } from "./types";
-import { supabase } from "@/supabase";
+import { createClient } from "@/utils/supabase/client";
 
 export const getTherapistList = async () => {
+	const supabase = createClient();
 	const { data, error } = await supabase.from("therapist_list").select();
 	if (error) {
 		console.error(error);
@@ -11,6 +12,7 @@ export const getTherapistList = async () => {
 };
 
 export const updateTherapist = async (status: string, id: string) => {
+	const supabase = createClient();
 	const { data, error } = await supabase
 		.from("therapist_list")
 		.update({ status })

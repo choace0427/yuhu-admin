@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 // import type { TherapistList } from "./types";
-import { supabase } from "@/supabase";
+import { createClient } from "@/utils/supabase/client";
 
 export const getRoomList = async () => {
+	const supabase = createClient();
 	const { data, error } = await supabase
 		.from("room")
 		.select(`*, chats:rooms_id(*), customers_list:customer_id(*)`);
@@ -22,6 +23,7 @@ export const getRoomList = async () => {
 };
 
 export const getSelectedConversation = async (room_id: string) => {
+	const supabase = createClient();
 	const { data, error } = await supabase
 		.from("chats")
 		.select()
@@ -33,6 +35,7 @@ export const getSelectedConversation = async (room_id: string) => {
 };
 
 export const updateTherapist = async (status: string, id: string) => {
+	const supabase = createClient();
 	const { data, error } = await supabase
 		.from("therapist_list")
 		.update({ status })

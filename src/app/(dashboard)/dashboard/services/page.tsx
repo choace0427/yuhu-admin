@@ -33,7 +33,7 @@ import {
 	IconAlertCircle,
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
-import { supabase } from "@/supabase";
+import { createClient } from "@/utils/supabase/client";
 
 export interface ServiceCategory {
 	id: string;
@@ -69,6 +69,7 @@ export default function CategoryManagement() {
 		try {
 			setLoading(true);
 
+			const supabase = createClient();
 			const { data: categoriesData, error: categoriesError } = await supabase
 				.from("service_category")
 				.select("*");
@@ -109,6 +110,7 @@ export default function CategoryManagement() {
 
 	const handleDeleteCategory = async (categoryId: string) => {
 		try {
+			const supabase = createClient();
 			const { error } = await supabase
 				.from("service_category")
 				.delete()
@@ -149,6 +151,7 @@ export default function CategoryManagement() {
 
 	const handleDeleteServiceType = async (serviceTypeId: string) => {
 		try {
+			const supabase = createClient();
 			const { error } = await supabase
 				.from("service_type")
 				.delete()
@@ -176,6 +179,7 @@ export default function CategoryManagement() {
 		const formData = new FormData(event.currentTarget);
 
 		try {
+			const supabase = createClient();
 			if (currentServiceType) {
 				const { error } = await supabase
 					.from("service_type")

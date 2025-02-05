@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import type { TransactionList } from "./types";
-import { supabase } from "@/supabase";
+import { createClient } from "@/utils/supabase/client";
 
 export const getTransactionList = async () => {
+	const supabase = createClient();
 	const { data, error } = await supabase
 		.from("transaction_list")
 		.select(

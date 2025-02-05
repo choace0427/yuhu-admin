@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { supabase } from "@/supabase";
+import { createClient } from "@/utils/supabase/client";
 
 export default function PasswordSettingsPage() {
 	const [loading, setLoading] = useState(false);
@@ -34,6 +34,7 @@ export default function PasswordSettingsPage() {
 	const handleSubmit = async (values: typeof form.values) => {
 		setLoading(true);
 		try {
+			const supabase = createClient();
 			const { data, error } = await supabase.auth.updateUser({
 				password: values.newPassword,
 			});

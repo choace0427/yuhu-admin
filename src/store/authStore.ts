@@ -1,4 +1,4 @@
-import { supabase } from "@/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { create } from "zustand";
 
 export const useAuthStore = create((set) => ({
@@ -9,6 +9,7 @@ export const useAuthStore = create((set) => ({
 
 	signIn: async (email: string, password: string) => {
 		set({ loading: true });
+		const supabase = createClient();
 		const { data, error } = await supabase.auth.signInWithPassword({
 			email,
 			password,
@@ -23,12 +24,14 @@ export const useAuthStore = create((set) => ({
 	},
 
 	signOut: async () => {
+		const supabase = createClient();
 		const { error } = await supabase.auth.signOut();
 		if (error) throw error;
 		set({ user: null });
 	},
 
 	checkAuth: async () => {
+		const supabase = createClient();
 		const {
 			data: { session },
 		} = await supabase.auth.getSession();
