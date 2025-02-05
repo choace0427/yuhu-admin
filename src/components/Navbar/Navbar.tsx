@@ -1,35 +1,89 @@
 "use client";
 
-import { ScrollArea } from "@mantine/core";
+import { Divider, ScrollArea } from "@mantine/core";
 
-import { UserButton } from "@/components/UserButton/UserButton";
 import type { NavItem } from "@/types/nav-item";
 import { NavLinksGroup } from "./NavLinksGroup";
 import classes from "./Navbar.module.css";
+import classes1 from "../../components/UserButton/UserButton.module.css";
+
+import { ActionIcon, Avatar, Flex, Menu, Text } from "@mantine/core";
+import {
+	IconDotsVertical,
+	IconLogout,
+	IconSettings,
+} from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
 
 interface Props {
-  data: NavItem[];
-  hidden?: boolean;
+	data: NavItem[];
+	hidden?: boolean;
 }
 
 export function Navbar({ data }: Props) {
-  const links = data.map((item) => (
-    <NavLinksGroup key={item.label} {...item} />
-  ));
+	const links = data.map((item) => (
+		<NavLinksGroup key={item.label} {...item} />
+	));
+	const signOut = useAuthStore((state: any) => state.signOut);
+	const user = useAuthStore((state: any) => state.user);
 
-  return (
-    <>
-      <ScrollArea className={classes.links}>
-        <div className={classes.linksInner}>{links}</div>
-      </ScrollArea>
+	const router = useRouter();
+	return (
+		<>
+			<ScrollArea className={classes.links}>
+				<div className={classes.linksInner}>{links}</div>
+			</ScrollArea>
 
-      <div className={classes.footer}>
-        <UserButton
-          image="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
-          name="Harriette"
-          email="hspoon@outlook.com"
-        />
-      </div>
-    </>
-  );
+			<Divider />
+			<div className={classes1.footer}>
+				<Flex
+					align={"center"}
+					justify={"space-between"}
+					className={classes1.user}
+				>
+					<Flex direction="row" gap={8}>
+						<Avatar
+							src={user?.avatar || ""}
+							radius="xl"
+							name="Admin"
+							color="initials"
+						/>
+
+						<div style={{ flex: 1 }}>
+							<Text size="sm">Admin</Text>
+
+							<Text c="dimmed" size="xs">
+								{user?.email}
+							</Text>
+						</div>
+					</Flex>
+					<Menu withinPortal position="bottom-end" shadow="sm">
+						<Menu.Target>
+							<ActionIcon variant="subtle">
+								<IconDotsVertical size="1rem" />
+							</ActionIcon>
+						</Menu.Target>
+
+						<Menu.Dropdown>
+							<Menu.Item
+								leftSection={<IconSettings size={14} />}
+								onClick={() => router.push("/dashboard/settings")}
+							>
+								Settings
+							</Menu.Item>
+							<Menu.Divider />
+							<Menu.Item
+								color="red"
+								leftSection={<IconLogout size={14} />}
+								onClick={() => signOut()}
+							>
+								Sign Out
+							</Menu.Item>
+						</Menu.Dropdown>
+					</Menu>
+				</Flex>
+			</div>
+		</>
+	);
 }
