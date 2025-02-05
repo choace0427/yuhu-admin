@@ -81,6 +81,12 @@ export function LoginForm() {
 						color: "red",
 					});
 			} catch (error) {
+				notifications.show({
+					title: "",
+					message: `Invalid login credentials`,
+					position: "top-center",
+					color: "red",
+				});
 				setErrors({ password: "Invalid email or password" });
 			}
 		}
