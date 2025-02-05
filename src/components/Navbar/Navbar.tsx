@@ -5,7 +5,6 @@ import { Divider, ScrollArea } from "@mantine/core";
 import type { NavItem } from "@/types/nav-item";
 import { NavLinksGroup } from "./NavLinksGroup";
 import classes from "./Navbar.module.css";
-import classes1 from "../../components/UserButton/UserButton.module.css";
 
 import { ActionIcon, Avatar, Flex, Menu, Text } from "@mantine/core";
 import {
@@ -36,11 +35,11 @@ export function Navbar({ data }: Props) {
 			</ScrollArea>
 
 			<Divider />
-			<div className={classes1.footer}>
+			<div className={classes.footer}>
 				<Flex
 					align={"center"}
 					justify={"space-between"}
-					className={classes1.user}
+					className={classes.user}
 				>
 					<Flex direction="row" gap={8}>
 						<Avatar
