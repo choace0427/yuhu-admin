@@ -119,12 +119,26 @@ export default function BookingAdminPanel() {
 												</Text>
 											</div>
 										</Group>
-										<Text size="sm" mt="xs">
-											<Text component="span" fw={500}>
-												Service:
-											</Text>{" "}
-											{row.original.therapist_list.service || "Not specified"}
-										</Text>
+										<Flex gap={"sm"}>
+											<Text component="span" fw={500} size="sm">
+												Services:
+											</Text>
+											<Flex gap={4}>
+												{row.original.therapist_list.services.map(
+													(item: any, index: any) => {
+														return (
+															<Badge
+																key={index}
+																className="bg-primary text-primary-foreground hover:bg-primary/90"
+																variant="outline"
+															>
+																{item.service_type?.subcategory}
+															</Badge>
+														);
+													}
+												) || "Not specified"}
+											</Flex>
+										</Flex>
 									</Stack>
 								</Paper>
 							</Grid.Col>
