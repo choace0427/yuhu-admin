@@ -9,4 +9,6 @@ export interface TherapistList {
 	status: string;
 	hourly_rate: number;
 	summary: string;
+	resume_url: string;
+	services: any[];
 }

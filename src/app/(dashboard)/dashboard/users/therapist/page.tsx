@@ -8,10 +8,7 @@ import {
 	Flex,
 	Menu,
 	Paper,
-	Rating,
-	Space,
 	Text,
-	Title,
 } from "@mantine/core";
 import { MantineReactTable, type MRT_ColumnDef } from "mantine-react-table";
 import { useEffect, useMemo } from "react";
@@ -20,6 +17,7 @@ import {
 	IconBlockquote,
 	IconCheck,
 	IconDotsVertical,
+	IconEye,
 } from "@tabler/icons-react";
 import { createClient } from "@/utils/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -70,6 +68,35 @@ export default function TherapistPage() {
 				},
 			},
 			{
+				accessorKey: "services",
+				header: "Services",
+				maxSize: 500,
+				minSize: 300,
+				Cell: ({ cell }) => {
+					const services = cell.row.original.services;
+					return (
+						<Flex gap={4}>
+							{services && services.length > 0 ? (
+								services.map((category: any, index: number) => (
+									<div key={index} className="space-y-1">
+										<Badge
+											className="bg-primary text-primary-foreground hover:bg-primary/90"
+											variant="outline"
+										>
+											{category.service_type?.subcategory}
+										</Badge>
+									</div>
+								))
+							) : (
+								<Text fs="italic" size="sm" color="gray">
+									No services
+								</Text>
+							)}
+						</Flex>
+					);
+				},
+			},
+			{
 				accessorKey: "summary",
 				header: "Summary",
 				size: 500,
@@ -88,6 +115,31 @@ export default function TherapistPage() {
 			{
 				accessorKey: "location",
 				header: "Location",
+			},
+			{
+				accessorKey: "resume",
+				header: "Resume",
+				Cell: ({ cell }) => {
+					return (
+						<>
+							{cell.row.original.resume_url ? (
+								<ActionIcon
+									component="a"
+									target="_blank"
+									variant="transparent"
+									mx={"auto"}
+									href={cell.row.original.resume_url}
+								>
+									<IconEye size={"1rem"} />
+								</ActionIcon>
+							) : (
+								<Text size="sm" fs="italic" color="gray">
+									No Resume
+								</Text>
+							)}
+						</>
+					);
+				},
 			},
 			{
 				accessorKey: "status",

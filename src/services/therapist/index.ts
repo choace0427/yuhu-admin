@@ -4,7 +4,16 @@ import { createClient } from "@/utils/supabase/client";
 
 export const getTherapistList = async () => {
 	const supabase = createClient();
-	const { data, error } = await supabase.from("therapist_list").select();
+	const { data, error } = await supabase.from("therapist_list").select(`
+		*,
+		services (
+		  *,
+		  service_type (
+			*,
+			service_category (*)
+		  )
+		)
+	  `);
 	if (error) {
 		console.error(error);
 	}

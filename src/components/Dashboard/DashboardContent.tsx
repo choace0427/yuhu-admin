@@ -153,15 +153,15 @@ export function DashboardContent() {
 								</Group>
 								<Badge
 									color={
-										customer?.status === "accepted"
+										customer?.status === "accept"
 											? "green"
 											: customer?.status === "pending"
-											? "gray"
+											? "orange"
 											: "red"
 									}
 									variant="light"
 								>
-									{customer?.status === "accepted"
+									{customer?.status === "accept"
 										? "Active"
 										: customer?.status === "pending"
 										? "Pending"
