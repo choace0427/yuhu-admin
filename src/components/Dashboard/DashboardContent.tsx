@@ -85,7 +85,7 @@ export function DashboardContent() {
 					<Card.Section withBorder inheritPadding py="xs">
 						<Group ps="apart">
 							<Text fw={500}>Recent Therapists</Text>
-							<Badge>5 members</Badge>
+							<Badge>10 members</Badge>
 						</Group>
 					</Card.Section>
 
@@ -128,7 +128,7 @@ export function DashboardContent() {
 					<Card.Section withBorder inheritPadding py="xs">
 						<Group ps="apart">
 							<Text fw={500}>Recent Customers</Text>
-							<Badge>5 members</Badge>
+							<Badge>10 members</Badge>
 						</Group>
 					</Card.Section>
 

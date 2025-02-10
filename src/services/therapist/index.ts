@@ -6,6 +6,8 @@ export const getTherapistList = async () => {
 	const supabase = createClient();
 	const { data, error } = await supabase.from("therapist_list").select(`
 		*,
+		bank_list (*),
+		booking_list (*),
 		services (
 		  *,
 		  service_type (

@@ -11,4 +11,5 @@ export interface TherapistList {
 	summary: string;
 	resume_url: string;
 	services: any[];
+	bank_list: any;
 }

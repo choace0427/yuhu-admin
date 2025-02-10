@@ -142,6 +142,42 @@ export default function TherapistPage() {
 				},
 			},
 			{
+				accessorKey: "iban_number",
+				header: "IBAN Number",
+				Cell: ({ cell }) => {
+					return (
+						<>
+							{cell.row.original.bank_list[0]?.iban_number ? (
+								cell.row.original.bank_list[0]?.iban_number
+							) : (
+								<Text size="xs" fs="italic" color="gray">
+									{" "}
+									"No IBAN Number"
+								</Text>
+							)}
+						</>
+					);
+				},
+			},
+			{
+				accessorKey: "swift_number",
+				header: "SWIFT/BIC Number",
+				Cell: ({ cell }) => {
+					return (
+						<>
+							{cell.row.original.bank_list[0]?.swift_number ? (
+								cell.row.original.bank_list[0]?.swift_number
+							) : (
+								<Text size="xs" fs="italic" color="gray">
+									{" "}
+									"No SWIFT/BIC Number"
+								</Text>
+							)}
+						</>
+					);
+				},
+			},
+			{
 				accessorKey: "status",
 				header: "Status",
 				Cell: ({ cell }) => {
