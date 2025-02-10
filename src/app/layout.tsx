@@ -14,6 +14,7 @@ import { theme } from "@/styles/theme";
 import { AppProvider } from "./provider";
 
 import "@mantine/notifications/styles.css";
+import "@mantine/carousel/styles.css";
 
 export const metadata = {
 	metadataBase: new URL("https://mantine-admin.vercel.app/"),
