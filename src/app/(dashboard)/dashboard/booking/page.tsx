@@ -21,6 +21,14 @@ import { useBooking } from "@/services/booking";
 import { BookingList } from "@/services/booking/types";
 import { PageContainer } from "@/components/PageContainer/PageContainer";
 
+const timeSlots = Array.from({ length: 32 }, (_, i) => {
+	const hour = Math.floor(i / 4) + 9;
+	const minute = (i % 4) * 15;
+	return `${hour.toString().padStart(2, "0")}:${minute
+		.toString()
+		.padStart(2, "0")}`;
+});
+
 export default function BookingAdminPanel() {
 	const { data, isError, isFetching, isLoading } = useBooking();
 
@@ -105,6 +113,8 @@ export default function BookingAdminPanel() {
 											<Avatar
 												src={row.original.therapist_list?.avatar_url}
 												alt={row.original.therapist_list?.name}
+												name={row.original.therapist_list?.name}
+												color="initials"
 												radius="xl"
 												size="lg"
 											/>
@@ -160,7 +170,8 @@ export default function BookingAdminPanel() {
 													Duration
 												</Text>
 												<Text>
-													{(row.original.b_date?.range?.length || 0) * 2} hours
+													{(row.original.b_date?.range?.length || 0) * 0.25}{" "}
+													hours
 												</Text>
 											</div>
 											<div>
@@ -186,16 +197,23 @@ export default function BookingAdminPanel() {
 										</Text>
 										<Group gap="xs">
 											{Array.isArray(row.original.b_date?.range) &&
-												row.original.b_date.range.map((timeSlot: number) => {
-													const startHour = timeSlot * 2;
-													const endHour = startHour + 2;
-													return (
-														<Badge key={timeSlot} variant="outline" size="lg">
-															{startHour.toString().padStart(2, "0")}:00 -{" "}
-															{endHour.toString().padStart(2, "0")}:00
-														</Badge>
-													);
-												})}
+												row.original.b_date.range
+													.filter(
+														(index: number) =>
+															index >= 0 && index < timeSlots.length
+													)
+													.map((index: number) => {
+														const startTime = timeSlots[index - 1];
+														const endTime = timeSlots[index];
+
+														if (!endTime) return null;
+
+														return (
+															<Badge key={index} variant="outline" size="lg">
+																{startTime} - {endTime}
+															</Badge>
+														);
+													})}
 										</Group>
 									</Stack>
 								</Paper>
