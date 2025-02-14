@@ -8,6 +8,7 @@ import {
 	Menu,
 	ScrollArea,
 	Stack,
+	Text,
 	TextInput,
 	Title,
 } from "@mantine/core";
@@ -33,19 +34,24 @@ interface Props {
 
 export function AdminHeader({ burger }: Props) {
 	const supabase = createClient();
-	const router = useRouter();
-	const [opened, { close, open }] = useDisclosure(false);
 
 	const [notifications, setNotifications] = useState<any[]>([]);
 
-	const { data, isLoading, refetch } = useNotification();
-
 	const handleNotification = async () => {
-		console.log("---------");
+		const { data, error } = await supabase
+			.from("notifications")
+			.select()
+			.eq("read_status", false);
+		if (error) {
+			console.error(error);
+			throw error;
+		}
+
+		setNotifications(data);
 	};
 
 	const handleReadNotifications = async (id: any) => {
-		const { data, error } = await supabase
+		const { error } = await supabase
 			.from("notifications")
 			.update({ read_status: true })
 			.eq("notification_id", id);
@@ -54,6 +60,8 @@ export function AdminHeader({ burger }: Props) {
 
 		getNotificationsList();
 	};
+
+	const { user } = useAuthStore();
 
 	useEffect(() => {
 		const notificationChannel = supabase
@@ -64,7 +72,7 @@ export function AdminHeader({ burger }: Props) {
 					event: "*",
 					schema: "public",
 					table: "notifications",
-					filter: "notification_type=5",
+					filter: `notification_type=eq.${5}`,
 				},
 				handleNotification
 			)
@@ -73,7 +81,7 @@ export function AdminHeader({ burger }: Props) {
 		return () => {
 			notificationChannel.unsubscribe();
 		};
-	}, [refetch]);
+	}, []);
 
 	return (
 		<header className={classes.header}>
@@ -94,16 +102,18 @@ export function AdminHeader({ burger }: Props) {
 							color="red"
 							size={8}
 							offset={2}
-							disabled={data && data?.length > 0 ? false : true}
+							disabled={
+								notifications && notifications?.length > 0 ? false : true
+							}
 						>
 							<IconBell size="1.25rem" />
 						</Indicator>
 					</ActionIcon>
 				</Menu.Target>
-				{data && data?.length > 0 && (
-					<Menu.Dropdown>
-						<ScrollArea mah={200}>
-							{data?.map((item: NotificationsList, index) => {
+				<Menu.Dropdown>
+					<ScrollArea mah={200}>
+						{notifications && notifications?.length > 0 ? (
+							notifications?.map((item: NotificationsList, index) => {
 								return (
 									<Menu.Item
 										key={index}
@@ -114,10 +124,14 @@ export function AdminHeader({ burger }: Props) {
 										<Title order={6}>{item.content}</Title>
 									</Menu.Item>
 								);
-							})}
-						</ScrollArea>
-					</Menu.Dropdown>
-				)}
+							})
+						) : (
+							<Menu.Item>
+								<Text>No Notifications</Text>
+							</Menu.Item>
+						)}
+					</ScrollArea>
+				</Menu.Dropdown>
 			</Menu>
 		</header>
 	);

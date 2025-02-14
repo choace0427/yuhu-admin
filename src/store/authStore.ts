@@ -1,7 +1,16 @@
 import { createClient } from "@/utils/supabase/client";
 import { create } from "zustand";
 
-export const useAuthStore = create((set) => ({
+interface AuthState {
+	user: any | null;
+	loading: boolean;
+	signIn: (email: string, password: string, router: any) => void;
+	signOut: () => Promise<void>;
+	setUser: (email: string, password: string) => void;
+	setLoading: (loading: boolean) => void;
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
 	user: null,
 	loading: false,
 	setUser: (user: any) => set({ user }),
