@@ -2,6 +2,8 @@ import {
 	IconComponents,
 	IconDashboard,
 	IconEyeDollar,
+	IconLocation,
+	IconLocationPin,
 	IconLock,
 	IconMessage,
 	IconMoodSmile,
@@ -47,5 +49,10 @@ export const navLinks: NavItem[] = [
 		label: "Chat",
 		icon: IconMessage,
 		link: "/dashboard/chat_history",
+	},
+	{
+		label: "Location",
+		icon: IconLocationPin,
+		link: "/dashboard/location",
 	},
 ];
