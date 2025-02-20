@@ -35,12 +35,7 @@ import {
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { createClient } from "@/utils/supabase/client";
-import {
-	Dropzone,
-	DropzoneProps,
-	IMAGE_MIME_TYPE,
-	FileWithPath,
-} from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 
 export interface Country {
 	id: string;
@@ -55,7 +50,7 @@ export interface City {
 	image: string;
 }
 
-export default function LocationManagement(props: Partial<DropzoneProps>) {
+export default function LocationManagement() {
 	const theme = useMantineTheme();
 	const supabase = createClient();
 
