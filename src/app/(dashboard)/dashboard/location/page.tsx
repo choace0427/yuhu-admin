@@ -20,6 +20,7 @@ import {
 	Alert,
 	Textarea,
 	LoadingOverlay,
+	Image,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -34,6 +35,12 @@ import {
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { createClient } from "@/utils/supabase/client";
+import {
+	Dropzone,
+	DropzoneProps,
+	IMAGE_MIME_TYPE,
+	FileWithPath,
+} from "@mantine/dropzone";
 
 export interface Country {
 	id: string;
@@ -44,9 +51,14 @@ export interface City {
 	id: string;
 	city: string;
 	country_id: string;
+	description: string;
+	image: string;
 }
 
-export default function LocationManagement() {
+export default function LocationManagement(props: Partial<DropzoneProps>) {
+	const theme = useMantineTheme();
+	const supabase = createClient();
+
 	const [countries, setCountries] = useState<Country[]>([]);
 	const [cities, setCities] = useState<City[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -54,9 +66,23 @@ export default function LocationManagement() {
 	const [editMode, setEditMode] = useState(false);
 	const [currentCountry, setCurrentCountry] = useState<Country | null>(null);
 	const [currentCity, setCurrentCity] = useState<City | null>(null);
+	const [currentDescription, setCurrentDescription] = useState<City | null>(
+		null
+	);
 	const [expandedCountry, setExpandedCountry] = useState<string | null>(null);
 
-	const theme = useMantineTheme();
+	const [file, setFile] = useState<File | null>(null);
+	const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+
+	const preview = file ? (
+		<Image
+			src={URL.createObjectURL(file)}
+			alt="Preview"
+			width={120}
+			height={120}
+			onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))}
+		/>
+	) : null;
 
 	useEffect(() => {
 		fetchData();
@@ -145,6 +171,7 @@ export default function LocationManagement() {
 		setCurrentCountry(
 			countries.find((country) => country.id === city.country_id) || null
 		);
+		setUploadedImage(city?.image);
 		setCurrentCity(city);
 		open();
 	};
@@ -174,9 +201,38 @@ export default function LocationManagement() {
 		}
 	};
 
+	const uploadImage = async () => {
+		if (!file) return null;
+
+		const CITY_BUCKET = "city";
+
+		const uniqueFileName = `${Date.now()}_${file.name}`;
+		const { data, error } = await supabase.storage
+			.from(CITY_BUCKET)
+			.upload(uniqueFileName, file);
+
+		if (error) {
+			console.error("Error uploading file:", error.message);
+			return null;
+		}
+
+		const { publicUrl } = supabase.storage
+			.from(CITY_BUCKET)
+			.getPublicUrl(uniqueFileName).data;
+
+		setUploadedImage(publicUrl);
+		setFile(null);
+		return publicUrl;
+	};
+
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
+
+		let imageUrl = uploadedImage;
+		if (file) {
+			imageUrl = await uploadImage();
+		}
 
 		try {
 			const supabase = createClient();
@@ -185,6 +241,8 @@ export default function LocationManagement() {
 					.from("location_city")
 					.update({
 						city: formData.get("name") as string,
+						description: formData.get("description") as string,
+						image: imageUrl as string,
 					})
 					.eq("id", currentCity.id);
 
@@ -194,6 +252,8 @@ export default function LocationManagement() {
 					.from("location_country")
 					.update({
 						country: formData.get("name") as string,
+						description: formData.get("description") as string,
+						image: imageUrl as string,
 					})
 					.eq("id", currentCountry.id);
 
@@ -201,6 +261,8 @@ export default function LocationManagement() {
 			} else if (currentCountry) {
 				const { error } = await supabase.from("location_city").insert({
 					city: formData.get("name") as string,
+					description: formData.get("description") as string,
+					image: imageUrl as string,
 					country_id: currentCountry.id,
 				});
 
@@ -208,6 +270,8 @@ export default function LocationManagement() {
 			} else {
 				const { error } = await supabase.from("location_country").insert({
 					country: formData.get("name") as string,
+					description: formData.get("description") as string,
+					image: imageUrl as string,
 				});
 
 				if (error) throw error;
@@ -430,9 +494,57 @@ export default function LocationManagement() {
 									: ""
 							}
 						/>
+						{currentCity && (
+							<Textarea
+								label="City Description"
+								name="description"
+								mt={"sm"}
+								minRows={4}
+								required
+								placeholder="Enter description..."
+								defaultValue={editMode ? currentCity.description : ""}
+							/>
+						)}
+
+						<div>
+							<Box mt="sm">
+								<Text size="sm" fw={500}>
+									City Image
+								</Text>
+								<Dropzone
+									accept={IMAGE_MIME_TYPE}
+									onDrop={(files) => setFile(files[0])}
+								>
+									{file ? preview : <Text ta="center">Drop an image here</Text>}
+								</Dropzone>
+							</Box>
+
+							<Box mt="lg">
+								<Text size="sm" fw={500}>
+									Uploaded Image
+								</Text>
+								<Box style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+									{uploadedImage && (
+										<div style={{ position: "relative", width: "100%" }}>
+											<Image
+												src={uploadedImage}
+												alt="Uploaded Image"
+												height={200}
+											/>
+										</div>
+									)}
+								</Box>
+							</Box>
+						</div>
 
 						<Group ps="right" mt="xl">
-							<Button variant="light" onClick={close}>
+							<Button
+								variant="light"
+								onClick={() => {
+									setFile(null);
+									close();
+								}}
+							>
 								Cancel
 							</Button>
 							<Button
