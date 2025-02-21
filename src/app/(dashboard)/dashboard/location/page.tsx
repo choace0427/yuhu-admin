@@ -61,9 +61,6 @@ export default function LocationManagement() {
 	const [editMode, setEditMode] = useState(false);
 	const [currentCountry, setCurrentCountry] = useState<Country | null>(null);
 	const [currentCity, setCurrentCity] = useState<City | null>(null);
-	const [currentDescription, setCurrentDescription] = useState<City | null>(
-		null
-	);
 	const [expandedCountry, setExpandedCountry] = useState<string | null>(null);
 
 	const [file, setFile] = useState<File | null>(null);

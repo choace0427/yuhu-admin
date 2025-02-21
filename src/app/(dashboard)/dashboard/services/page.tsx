@@ -20,6 +20,7 @@ import {
 	Alert,
 	Textarea,
 	LoadingOverlay,
+	Image,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -34,6 +35,7 @@ import {
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { createClient } from "@/utils/supabase/client";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 
 export interface ServiceCategory {
 	id: string;
@@ -45,9 +47,12 @@ export interface ServiceType {
 	subcategory: string;
 	category_id: string;
 	service_content: string;
+	image_url: string;
 }
 
 export default function CategoryManagement() {
+	const supabase = createClient();
+
 	const [categories, setCategories] = useState<ServiceCategory[]>([]);
 	const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -59,6 +64,43 @@ export default function CategoryManagement() {
 		useState<ServiceType | null>(null);
 	const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
+	const [file, setFile] = useState<File | null>(null);
+	const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+
+	const preview = file ? (
+		<Image
+			src={URL.createObjectURL(file)}
+			alt="Preview"
+			width={120}
+			height={120}
+			onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))}
+		/>
+	) : null;
+
+	const uploadImage = async () => {
+		if (!file) return null;
+
+		const CITY_BUCKET = "service";
+
+		const uniqueFileName = `${Date.now()}_${file.name}`;
+		const { data, error } = await supabase.storage
+			.from(CITY_BUCKET)
+			.upload(uniqueFileName, file);
+
+		if (error) {
+			console.error("Error uploading file:", error.message);
+			return null;
+		}
+
+		const { publicUrl } = supabase.storage
+			.from(CITY_BUCKET)
+			.getPublicUrl(uniqueFileName).data;
+
+		setUploadedImage(publicUrl);
+		setFile(null);
+		return publicUrl;
+	};
+
 	const theme = useMantineTheme();
 
 	useEffect(() => {
@@ -69,7 +111,6 @@ export default function CategoryManagement() {
 		try {
 			setLoading(true);
 
-			const supabase = createClient();
 			const { data: categoriesData, error: categoriesError } = await supabase
 				.from("service_category")
 				.select("*");
@@ -145,6 +186,7 @@ export default function CategoryManagement() {
 		setCurrentCategory(
 			categories.find((cat) => cat.id === serviceType.category_id) || null
 		);
+		setUploadedImage(serviceType?.image_url);
 		setCurrentServiceType(serviceType);
 		open();
 	};
@@ -178,6 +220,11 @@ export default function CategoryManagement() {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
 
+		let imageUrl = uploadedImage;
+		if (file) {
+			imageUrl = await uploadImage();
+		}
+
 		try {
 			const supabase = createClient();
 			if (currentServiceType) {
@@ -186,6 +233,7 @@ export default function CategoryManagement() {
 					.update({
 						subcategory: formData.get("name") as string,
 						service_content: formData.get("content") as string,
+						image_url: imageUrl as string,
 					})
 					.eq("id", currentServiceType.id);
 
@@ -204,6 +252,7 @@ export default function CategoryManagement() {
 					subcategory: formData.get("name") as string,
 					category_id: currentCategory.id,
 					service_content: formData.get("content") as string,
+					image_url: imageUrl as string,
 				});
 
 				if (error) throw error;
@@ -455,8 +504,45 @@ export default function CategoryManagement() {
 							/>
 						)}
 
+						<div>
+							<Box mt="sm">
+								<Text size="sm" fw={500}>
+									Service Image
+								</Text>
+								<Dropzone
+									accept={IMAGE_MIME_TYPE}
+									onDrop={(files) => setFile(files[0])}
+								>
+									{file ? preview : <Text ta="center">Drop an image here</Text>}
+								</Dropzone>
+							</Box>
+
+							<Box mt="lg">
+								<Text size="sm" fw={500}>
+									Uploaded Image
+								</Text>
+								<Box style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+									{uploadedImage && (
+										<div style={{ position: "relative", width: "100%" }}>
+											<Image
+												src={uploadedImage}
+												alt="Uploaded Image"
+												height={200}
+											/>
+										</div>
+									)}
+								</Box>
+							</Box>
+						</div>
+
 						<Group ps="right" mt="xl">
-							<Button variant="light" onClick={close}>
+							<Button
+								variant="light"
+								onClick={() => {
+									setFile(null);
+									close();
+								}}
+							>
 								Cancel
 							</Button>
 							<Button
